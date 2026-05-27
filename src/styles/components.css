@@ -604,6 +604,137 @@ input[type='range']::-moz-range-thumb {
   text-align: right;
 }
 
+/* ---- TOP BAR view toggle ---- */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg-panel);
+  overflow: hidden;
+  padding: 2px;
+}
+.view-seg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: transparent;
+  border: none;
+  padding: 5px 11px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: 0.22s;
+}
+.view-seg:hover { color: var(--ink-dim); }
+.view-seg.active {
+  color: var(--ink);
+  background: var(--accent-glow);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+/* ---- MAP PANE ---- */
+.map-pane {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 18px 150px;
+  overflow: hidden;
+  animation: rise 0.5s ease both;
+}
+.map-head { padding: 0 4px 14px; }
+.map-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.map-kicker::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: var(--accent-soft);
+}
+.map-name {
+  font-family: 'Miriam Libre', sans-serif;
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--ink);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.map-coord {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+}
+.map-frame {
+  flex: 1 1 auto;
+  min-height: 320px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--bg-void);
+  position: relative;
+}
+.mapview {
+  position: absolute;
+  inset: 0;
+}
+/* Tone down Mapbox's bright default attribution + ctrl chrome */
+.mapview .mapboxgl-ctrl-attrib {
+  background: rgba(13, 17, 22, 0.7);
+  color: var(--ink-faint);
+}
+.mapview .mapboxgl-ctrl-attrib a { color: var(--ink-dim); }
+
+.map-missing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  gap: 8px;
+}
+.map-missing-mark {
+  width: 40px;
+  height: 1px;
+  background: var(--ink-faint);
+  margin-bottom: 12px;
+}
+.map-missing-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+.map-missing-sub {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  max-width: 280px;
+}
+.map-missing-sub code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+}
+
 /* prototype watermark */
 .proto-tag {
   position: absolute;

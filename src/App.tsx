@@ -10,11 +10,15 @@ import { ThenNow } from '@/components/ThenNow';
 import { SilenceState } from '@/components/SilenceState';
 import { PreviewState } from '@/components/PreviewState';
 import { SimDock } from '@/components/SimDock';
+import { MapView } from '@/components/MapView';
+
+type View = 'companion' | 'map';
 
 export default function App() {
-  const pos = usePosition(DEFAULT_STAND, 45);
+  const pos = usePosition(STANDS, DEFAULT_STAND, 45);
   const [day, setDay] = useState<DayKey>(DEFAULT_DAY);
   const [depth, setDepth] = useState<Depth>('essence');
+  const [view, setView] = useState<View>('companion');
 
   const stand = STANDS[pos.standId];
 
@@ -36,54 +40,95 @@ export default function App() {
             <div className="title">Arnhem</div>
             <div className="sub">Battlefield Companion · PoC</div>
           </div>
-          <div className="sig-pill">
-            <span className="sig-dot" />
-            <span>
-              {stand.kind === 'silence'
-                ? 'In silence'
-                : stand.kind === 'preview'
-                ? 'Preview'
-                : 'Located'}
-            </span>
+          <div className="topbar-right">
+            <div className="view-toggle" role="tablist" aria-label="View">
+              <button
+                role="tab"
+                aria-selected={view === 'companion'}
+                className={`view-seg ${view === 'companion' ? 'active' : ''}`}
+                onClick={() => setView('companion')}
+              >
+                Stand
+              </button>
+              <button
+                role="tab"
+                aria-selected={view === 'map'}
+                className={`view-seg ${view === 'map' ? 'active' : ''}`}
+                onClick={() => setView('map')}
+              >
+                Map
+              </button>
+            </div>
+            <div className="sig-pill">
+              <span className="sig-dot" />
+              <span>
+                {stand.kind === 'silence'
+                  ? 'In silence'
+                  : stand.kind === 'preview'
+                  ? 'Preview'
+                  : 'Located'}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* MAIN SCROLL */}
-        <div className="scroll">
-          {/* LOCATION HEADER */}
-          <div className="loc-head">
-            <div className="loc-kicker">
-              {stand.kind === 'silence'
-                ? 'Hallowed Ground'
-                : stand.kind === 'preview'
-                ? 'Preview Stand'
-                : stand.stand}
+        {view === 'companion' && (
+          <div className="scroll">
+            {/* LOCATION HEADER */}
+            <div className="loc-head">
+              <div className="loc-kicker">
+                {stand.kind === 'silence'
+                  ? 'Hallowed Ground'
+                  : stand.kind === 'preview'
+                  ? 'Preview Stand'
+                  : stand.stand}
+              </div>
+              <h1 className="loc-name">{stand.name}</h1>
+              <div className="loc-coord">{stand.coord}</div>
             </div>
-            <h1 className="loc-name">{stand.name}</h1>
-            <div className="loc-coord">{stand.coord}</div>
+
+            {stand.kind === 'authored' && (
+              <>
+                <CompanionCard
+                  stand={stand}
+                  day={day}
+                  depth={depth}
+                  onDay={setDay}
+                  onDepth={setDepth}
+                />
+                <GroundSight sectors={stand.days[day].sectors} heading={pos.heading} />
+                <AskTheGround standId={pos.standId} suggestions={stand.suggestions} />
+                {stand.hasThenNow && <ThenNow />}
+              </>
+            )}
+
+            {stand.kind === 'silence' && <SilenceState stand={stand} />}
+
+            {stand.kind === 'preview' && (
+              <PreviewState stand={stand} onReturn={() => goToStand('bridge')} />
+            )}
           </div>
+        )}
 
-          {stand.kind === 'authored' && (
-            <>
-              <CompanionCard
-                stand={stand}
-                day={day}
-                depth={depth}
-                onDay={setDay}
-                onDepth={setDepth}
+        {view === 'map' && (
+          <div className="map-pane">
+            <div className="map-head">
+              <div className="map-kicker">Catchment</div>
+              <div className="map-name">{stand.name}</div>
+              <div className="map-coord">{stand.coord}</div>
+            </div>
+            <div className="map-frame">
+              <MapView
+                centerLat={stand.lat}
+                centerLng={stand.lng}
+                userLat={pos.coords.lat}
+                userLng={pos.coords.lng}
+                heading={pos.heading}
               />
-              <GroundSight sectors={stand.days[day].sectors} heading={pos.heading} />
-              <AskTheGround standId={pos.standId} suggestions={stand.suggestions} />
-              {stand.hasThenNow && <ThenNow />}
-            </>
-          )}
-
-          {stand.kind === 'silence' && <SilenceState stand={stand} />}
-
-          {stand.kind === 'preview' && (
-            <PreviewState stand={stand} onReturn={() => goToStand('bridge')} />
-          )}
-        </div>
+            </div>
+          </div>
+        )}
 
         {/* DOCK */}
         <SimDock
